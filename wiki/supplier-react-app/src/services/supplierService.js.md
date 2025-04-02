@@ -1,70 +1,68 @@
-# Documentation: `supplierService.js`
+# Documentation: Supplier Service
 
 ## Overview
-This file contains utility functions for interacting with a supplier-related API. It provides methods to fetch all suppliers and create a new supplier. The API is hosted on a server defined by the `serverUrl` constant.
+This file, `supplierService.js`, provides functionality to interact with a supplier management API. It includes methods for retrieving all suppliers and creating new supplier records. The service communicates with a backend server hosted at `http://localhost:8081`.
 
 ---
 
 ## Functions
 
-### `getAllSuppliers()`
-Fetches all suppliers from the API.
+### 1. `getAllSuppliers()`
+#### Description:
+Fetches a list of all suppliers from the API.
 
-#### **Usage**
-```javascript
-const suppliers = await getAllSuppliers();
-```
+#### Key Details:
+- **Endpoint:** `/api/suppliers`
+- **HTTP Method:** `GET`
+- **Error Handling:** Throws an error if the response is not successful (`response.ok` is `false`).
+- **Return Value:** Returns the list of suppliers in JSON format.
 
-#### **Details**
-- **Endpoint**: `GET /api/suppliers`
-- **Returns**: A JSON array of supplier objects.
-- **Error Handling**: Throws an error if the response status is not OK (`response.ok` is `false`).
+#### Use Case:
+This function is used to retrieve the complete list of suppliers for display or further processing.
 
 ---
 
-### `createSupplier(supplier)`
-Creates a new supplier by sending a POST request to the API.
+### 2. `createSupplier(supplier)`
+#### Description:
+Creates a new supplier record in the system.
 
-#### **Usage**
-```javascript
-const newSupplier = {
-    name: 'Supplier Name',
-    cnpj: '12.345.678/0001-99',
-    address: '123 Supplier St.'
-};
-
-const createdSupplier = await createSupplier(newSupplier);
-```
-
-#### **Details**
-- **Input**: 
-  - `supplier` (Object): Contains supplier details such as `name`, `cnpj`, and other relevant fields.
-  - The `cnpj` field is sanitized to remove all non-numeric characters before sending the request.
-- **Endpoint**: `POST /api/suppliers`
-- **Headers**: 
+#### Key Details:
+- **Input:** 
+  - `supplier` (Object): Contains supplier details, including `cnpj` (a Brazilian company identifier).
+- **Data Transformation:**
+  - The `cnpj` field is sanitized by removing all non-numeric characters before sending the data to the API.
+- **Endpoint:** `/api/suppliers`
+- **HTTP Method:** `POST`
+- **Headers:** 
   - `Content-Type: application/json`
-- **Body**: JSON representation of the sanitized supplier object.
-- **Returns**: The created supplier object as JSON.
-- **Error Handling**: Throws an error if the response status is not OK (`response.ok` is `false`).
+- **Body:** JSON representation of the sanitized supplier object.
+- **Error Handling:** Throws an error if the response is not successful (`response.ok` is `false`).
+- **Return Value:** Returns the created supplier record in JSON format.
 
----
-
-## Constants
-
-### `serverUrl`
-- **Value**: `'http://localhost:8081'`
-- **Purpose**: Base URL for the API endpoints.
+#### Use Case:
+This function is used to add a new supplier to the system, ensuring the `cnpj` field is properly formatted before submission.
 
 ---
 
 ## Insights
 
-1. **Error Handling**: Both functions implement basic error handling by checking the `response.ok` property. This ensures that failed API calls are caught and reported.
+### API Interaction
+- The service interacts with a backend API hosted at `http://localhost:8081`. This URL is hardcoded, which may limit flexibility in deployment environments. Consider externalizing the server URL into a configuration file or environment variable for better scalability.
 
-2. **Data Sanitization**: The `createSupplier` function sanitizes the `cnpj` field by removing all non-numeric characters using a regular expression (`/\D/g`). This ensures that the data sent to the API is clean and consistent.
+### Error Handling
+- Both functions include basic error handling by checking the `response.ok` property. However, the error messages are generic (`Failed to fetch suppliers`, `Failed to create supplier`). Enhancing error messages with more specific details (e.g., HTTP status codes or response body) could improve debugging and user feedback.
 
-3. **Asynchronous Operations**: Both functions use `async/await` for handling asynchronous API calls, making the code more readable and easier to maintain.
+### Data Validation
+- The `createSupplier` function ensures the `cnpj` field is sanitized by removing non-numeric characters. This is a critical step for maintaining data integrity when interacting with the backend.
 
-4. **API Design**: The file assumes a RESTful API design with endpoints for fetching (`GET`) and creating (`POST`) suppliers.
+### Potential Enhancements
+- **Pagination:** The `getAllSuppliers` function does not account for pagination. If the supplier list grows large, consider implementing pagination support to optimize performance.
+- **Error Logging:** Implementing a logging mechanism for errors could help track issues more effectively.
+- **Input Validation:** Additional validation for supplier fields (e.g., name, address) could be added to ensure data quality before submission.
 
-5. **Scalability**: The `serverUrl` constant allows for easy modification of the base URL, making the code adaptable to different environments (e.g., development, staging, production).
+---
+
+## Metadata
+
+| **File Name** | `supplierService.js` |
+|---------------|-----------------------|
